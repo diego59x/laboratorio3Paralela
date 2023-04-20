@@ -76,18 +76,7 @@ int main(void) {
    Print_vector(local_y, 10, n, "First 10 elements of y", my_rank, comm);
    Print_vector(local_z, 10, n,  "First 10 elements of z", my_rank, comm);
 
-   Print_vector(local_x, 10, n, "\n\nLast 10 elements of x", my_rank, comm);
-   Print_vector(local_y, 10, n, "First 10 elements of y", my_rank, comm);
-   Print_vector(local_z, 10, n,  "Last 10 elements of z", my_rank, comm);
-
    double scalar = 2.0;
-
-   Parallel_vector_scalar(local_x, local_n, scalar);
-   Parallel_vector_scalar(local_y, local_n, scalar);
-
-   printf("Scalar results \n");
-   Print_vector(local_x, 10, n, "\n\nLast 10 elements of x", my_rank, comm);
-   Print_vector(local_y, 10, n, "First 10 elements of y", my_rank, comm);
 
    if(my_rank==0) {
       printf("\n\nTook %f ms to run\n", (tend-tstart));
@@ -175,7 +164,7 @@ void Read_n(
    char *fname = "Read_n";
    
    if (my_rank == 0) 
-      *n_p = 10;
+      *n_p = 20;
    MPI_Bcast(n_p, 1, MPI_INT, 0, comm);
    if (*n_p <= 0 || *n_p % comm_sz != 0) local_ok = 0;
    Check_for_error(local_ok, fname,
@@ -362,22 +351,3 @@ double Parallel_vector_point(
    return local_result;
 } 
 
-
-/*-------------------------------------------------------------------
- * Function:  Parallel_vector_scalar
- * Purpose:   Calculate the operation of multiplying a vector by a scalar
- * In args:   local_v:  local storage of one of the vectors being operated
- *            local_z:  local storage for the result vector being operated
- *            local_n:  the number of components in local_x, local_y,
- *                      and local_z
- * Out arg:   scalar:  scalar to multiply
- */
-void Parallel_vector_scalar(
-      double  local_v[]  /* in out  */,
-      int     local_n    /* in  */,
-      double     scalar     /* in  */ ) {
-   int local_i;
-
-   for (local_i = 0; local_i < local_n; local_i++)
-      local_v[local_i] = local_v[local_i] * scalar;
-}  
